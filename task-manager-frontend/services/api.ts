@@ -28,7 +28,9 @@ const api = axios.create({
 });
 
 export const taskService = {
-  getAll: () => api.get<Task[]>('/tasks'),
+  getAll: (params?: { status?: string; page?: number; limit?: number }) =>
+  api.get<{ data: Task[]; total: number; page: number; totalPages: number }>('/tasks', { params }),
+
   getById: (id: string) => api.get<Task>(`/tasks/${id}`),
   create: (data: CreateTaskDto) => api.post<Task>('/tasks', data),
   update: (id: string, data: UpdateTaskDto) => api.put<Task>(`/tasks/${id}`, data),

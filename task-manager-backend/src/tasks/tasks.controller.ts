@@ -2,6 +2,8 @@ import { Controller, Get, Post, Put, Delete, Body, Param, HttpCode } from '@nest
 import { TasksService } from './tasks.service';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
+import { Query } from '@nestjs/common';
+import { TaskStatus } from './task.entity';
 
 @Controller('tasks')
 export class TasksController {
@@ -13,9 +15,13 @@ export class TasksController {
   }
 
   @Get()
-  findAll() {
-    return this.tasksService.findAll();
-  }
+findAll(
+  @Query('status') status?: TaskStatus,
+  @Query('page') page?: number,
+  @Query('limit') limit?: number,
+) {
+  return this.tasksService.findAll(status, page, limit);
+}
 
   @Get(':id')
   findOne(@Param('id') id: string) {

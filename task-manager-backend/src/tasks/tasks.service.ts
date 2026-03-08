@@ -2,8 +2,10 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Task } from './task.entity';
+import { TaskStatus } from './task.entity';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
+import { FindOptionsWhere } from 'typeorm';
 
 @Injectable()
 export class TasksService {
@@ -14,9 +16,19 @@ export class TasksService {
     return this.repo.save(task);
   }
 
-  findAll(): Promise<Task[]> {
-    return this.repo.find();
-  }
+  async findAll(status?: TaskStatus, page = 1, limit = 10) {
+  const where: FindOptionsWhere<Task> = {};
+  if (status) where.status = status;
+
+  const [data, total] = await this.repo.findAndCount({
+    where,
+    skip: (page - 1) * limit,
+    take: limit,
+    order: { createdAt: 'DESC' },
+  });
+
+  return { data, total, page, limit, totalPages: Math.ceil(total / limit) };
+}
 
   async findOne(id: string): Promise<Task> {
     const task = await this.repo.findOneBy({ id });

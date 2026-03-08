@@ -50,7 +50,7 @@ export function TaskForm({ onSuccess, editingTask, onCancelEdit }: Props) {
 
   return (
     <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow p-5 flex flex-col gap-3">
-      <h2 className="font-semibold text-gray-700 text-lg">
+      <h2 className="font-semibold text-black text-lg">
         {editingTask ? '✏️ Editar Tarefa' : '➕ Nova Tarefa'}
       </h2>
 
@@ -63,21 +63,21 @@ export function TaskForm({ onSuccess, editingTask, onCancelEdit }: Props) {
         value={title}
         onChange={(e) => setTitle(e.target.value)}
         placeholder="Título *"
-        className="border rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-400"
+        className="border rounded-lg px-3 py-2 text-sm text-black outline-none focus:ring-2 focus:ring-blue-400"
       />
 
       <textarea
         value={description}
         onChange={(e) => setDescription(e.target.value)}
         placeholder="Descrição (opcional)"
-        className="border rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-400 resize-none"
+        className="border rounded-lg px-3 py-2 text-sm text-black outline-none focus:ring-2 focus:ring-blue-400 resize-none"
         rows={3}
       />
 
       <select
         value={status}
         onChange={(e) => setStatus(e.target.value as TaskStatus)}
-        className="border rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-400"
+        className="border rounded-lg px-3 py-2 text-sm text-black outline-none focus:ring-2 focus:ring-blue-400"
       >
         <option value="pending">Pendente</option>
         <option value="in_progress">Em Progresso</option>
