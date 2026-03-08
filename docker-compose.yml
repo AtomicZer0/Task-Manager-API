@@ -1,0 +1,55 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: taskmanager_db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: taskdb
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d taskdb"]
+      interval: 3s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    networks:
+      - tasknetwork
+
+  backend:
+    build: ./task-manager-backend        # ← corrigido aqui
+    container_name: taskmanager_backend
+    ports:
+      - "3001:3001"
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_USERNAME: taskuser
+      DB_PASSWORD: suasenha
+      DB_NAME: taskdb
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - tasknetwork
+
+  frontend:
+    build: ./task-manager-frontend
+    container_name: taskmanager_frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    networks:
+      - tasknetwork
+
+volumes:
+  postgres_data:
+
+networks:
+  tasknetwork:
+    driver: bridge
