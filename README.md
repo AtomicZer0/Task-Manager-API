@@ -19,8 +19,8 @@ Aplicação fullstack de gerenciamento de tarefas com operações completas de c
 ├── README.md
 ├── database/
 │   └── init.sql
-├── task-manager-backend/       # API REST em NestJS
-└── task-manager-frontend/      # Interface em Next.js
+├── task-manager-backend/
+└── task-manager-frontend/
 ```
 
 ## 🚀 Como Rodar
@@ -77,11 +77,4 @@ cd task-manager-backend
 npm install
 npm run test
 ```
-
-Para relatório de cobertura:
-
-```bash
-npm run test:cov
-```
-
 ---
