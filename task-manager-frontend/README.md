@@ -1,40 +1,103 @@
 # 🖥️ Task Manager — Frontend
 
-Interface web desenvolvida com Next.js 15 para gerenciamento de tarefas, consumindo a API REST do backend.
+Interface web desenvolvida com Next.js 15 para gerenciamento de tarefas.
 
-## 🛠️ Tecnologias
-
-- [Next.js 15](https://nextjs.org/) — framework React com App Router
-- [TypeScript](https://www.typescriptlang.org/) — tipagem estática
-- [Tailwind CSS](https://tailwindcss.com/) — estilização utilitária
-- [Axios](https://axios-http.com/) — requisições HTTP
-
-## 🚀 Como Rodar Localmente
+## 📦 Como Instalar
 
 ### Pré-requisitos
 
 - Node.js 20+
 - Backend rodando em `http://localhost:3001`
 
-### 1. Instalar dependências
+### Instalar dependências
 
 ```bash
 npm install
 ```
 
-### 2. Rodar em modo desenvolvimento
+---
+
+## 🚀 Como Rodar
+
+### Modo desenvolvimento
 
 ```bash
 npm run dev
 ```
 
+### Modo produção
+
+```bash
+npm run build
+npm run start
+```
+
 A aplicação estará disponível em [**http://localhost:3000**](http://localhost:3000)
+
+### Rodar com Docker
+
+Na raiz do monorepo:
+
+```bash
+docker compose up --build
+```
+
+---
+
+## 🧪 Como Rodar os Testes
+
+Os testes do projeto estão no backend. Para rodá-los:
+
+```bash
+cd ../task-manager-backend
+npm run test
+```
+
+---
+
+## 📡 Exemplos de Requisições
+
+O frontend consome a API via `src/services/api.ts`. Abaixo estão os exemplos equivalentes em `curl`:
+
+### Listar tarefas (página 1)
+
+```bash
+curl "http://localhost:3001/tasks?page=1&limit=10"
+```
+
+### Filtrar por status
+
+```bash
+curl "http://localhost:3001/tasks?status=in_progress"
+```
+
+### Criar tarefa
+
+```bash
+curl -X POST http://localhost:3001/tasks \
+  -H "Content-Type: application/json" \
+  -d '{"title":"Nova tarefa","status":"pending"}'
+```
+
+### Atualizar status de uma tarefa
+
+```bash
+curl -X PUT http://localhost:3001/tasks/<id> \
+  -H "Content-Type: application/json" \
+  -d '{"status":"done"}'
+```
+
+### Deletar tarefa
+
+```bash
+curl -X DELETE http://localhost:3001/tasks/<id>
+```
 
 ---
 
 ## ⚙️ Configuração da API
 
-A URL base do backend está definida em `src/services/api.ts`:
+A URL base do backend está em `src/services/api.ts`:
 
 ```typescript
 const api = axios.create({
@@ -43,26 +106,3 @@ const api = axios.create({
 ```
 
 Se o backend estiver em outra URL, altere o `baseURL`.
-
----
-
-## 🔧 Funcionalidades
-
-- ✅ Criar tarefas com título, descrição e status
-- ✅ Listar todas as tarefas
-- ✅ Filtrar tarefas por status (Pendente, Em Progresso, Concluída)
-- ✅ Editar tarefas existentes
-- ✅ Excluir tarefas
-- ✅ Feedback de loading e erros nas requisições
-
----
-
-## 🐳 Rodar com Docker
-
-Na raiz do monorepo:
-
-```bash
-docker compose up --build
-```
-
-A aplicação estará disponível em [**http://localhost:3000**](http://localhost:3000)

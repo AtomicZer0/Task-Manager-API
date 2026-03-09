@@ -2,16 +2,7 @@
 
 API REST desenvolvida com NestJS e PostgreSQL para gerenciamento de tarefas.
 
-## 🛠️ Tecnologias
-
-- [NestJS](https://nestjs.com/) — framework Node.js progressivo
-- [TypeORM](https://typeorm.io/) — ORM para PostgreSQL
-- [PostgreSQL](https://www.postgresql.org/) — banco de dados relacional
-- [class-validator](https://github.com/typestack/class-validator) — validação de dados
-- [Jest](https://jestjs.io/) — testes unitários
-
-
-## 🚀 Como Rodar Localmente
+## 📦 Como Instalar
 
 ### Pré-requisitos
 
@@ -26,7 +17,7 @@ npm install
 
 ### 2. Configurar variáveis de ambiente
 
-Crie o arquivo `.env` na raiz da pasta:
+Crie o arquivo `.env` na raiz da pasta do backend:
 
 ```env
 DB_HOST=localhost
@@ -48,32 +39,37 @@ CREATE DATABASE taskdb OWNER taskuser;
 \q
 ```
 
-### 4. Rodar em modo desenvolvimento
+---
+
+## 🚀 Como Rodar
+
+### Modo desenvolvimento
 
 ```bash
 npm run start:dev
 ```
 
-A API estará disponível em [**http://localhost:3001**](http://localhost:3001)
+A API está disponível em [**http://localhost:3001**](http://localhost:3001)
+
+### Rodar com Docker
+
+Na raiz do monorepo:
+
+```bash
+docker compose up --build
+```
 
 ---
 
-## 🧪 Testes
+## 🧪 Como Rodar os Testes
+
+### Rodar todos os testes uma vez
 
 ```bash
-# Rodar todos os testes
 npm run test
-
-# Modo watch (re-roda ao salvar)
-npm run test:watch
-
-# Relatório de cobertura
-npm run test:cov
 ```
 
-### Cobertura de testes
-
-Os testes cobrem os seguintes cenários:
+### Cobertura dos testes
 
 | Método | Cenários testados |
 |---|---|
@@ -82,5 +78,92 @@ Os testes cobrem os seguintes cenários:
 | `findOne()` | Busca por ID existente e inexistente |
 | `update()` | Atualização de status e título, ID inexistente |
 | `remove()` | Remoção com sucesso, ID inexistente |
+
+---
+
+## 📡 Exemplos de Requisições
+
+### Criar tarefa
+
+```bash
+curl -X POST http://localhost:3001/tasks \
+  -H "Content-Type: application/json" \
+  -d '{
+    "title": "Estudar NestJS",
+    "description": "Revisar DTOs e Pipes",
+    "status": "pending"
+  }'
+```
+
+Resposta `201`:
+```json
+{
+  "id": "uuid-1",
+  "title": "Estudar NestJS",
+  "description": "Revisar DTOs e Pipes",
+  "status": "pending",
+  "createdAt": "2026-03-09T00:00:00.000Z",
+  "updatedAt": "2026-03-09T00:00:00.000Z"
+}
+```
+
+### Listar todas as tarefas
+
+```bash
+curl http://localhost:3001/tasks
+```
+
+Resposta `200`:
+```json
+{
+  "data": [...],
+  "total": 25,
+  "page": 1,
+  "limit": 10,
+  "totalPages": 3
+}
+```
+
+### Listar com filtro por status
+
+```bash
+curl "http://localhost:3001/tasks?status=pending"
+```
+
+### Listar com paginação
+
+```bash
+curl "http://localhost:3001/tasks?page=2&limit=10"
+```
+
+### Buscar tarefa por ID
+
+```bash
+curl http://localhost:3001/tasks/<id>
+```
+
+Resposta `404` se não existir:
+```json
+{
+  "statusCode": 404,
+  "message": "Task <id> não encontrada"
+}
+```
+
+### Atualizar tarefa
+
+```bash
+curl -X PUT http://localhost:3001/tasks/<id> \
+  -H "Content-Type: application/json" \
+  -d '{"status": "done"}'
+```
+
+### Deletar tarefa
+
+```bash
+curl -X DELETE http://localhost:3001/tasks/<id>
+```
+
+Resposta: `204 No Content`
 
 ---

@@ -1,34 +1,13 @@
 # 📝 Task Manager
 
-Aplicação fullstack de gerenciamento de tarefas com operações completas de criação, listagem, filtragem, paginação, atualização e exclusão.
+Aplicação fullstack de gerenciamento de tarefas com criação, listagem, filtragem, paginação, atualização e exclusão.
 
-## 🛠️ Tecnologias
-
-| Camada | Tecnologia |
-|---|---|
-| Backend | NestJS + TypeORM |
-| Frontend | Next.js 15 + Tailwind CSS |
-| Banco de Dados | PostgreSQL 16 |
-| Containerização | Docker + Docker Compose |
-
-## 📁 Estrutura do Projeto
-
-```
-/
-├── docker-compose.yml
-├── README.md
-├── database/
-│   └── init.sql
-├── task-manager-backend/
-└── task-manager-frontend/
-```
-
-## 🚀 Como Rodar
+## 📦 Como Instalar
 
 ### Pré-requisitos
 
 - [Docker](https://www.docker.com/) instalado e rodando
-- [Docker Compose](https://docs.docker.com/compose/) (já incluso no Docker Desktop)
+- [Git](https://git-scm.com/)
 
 ### 1. Clonar o repositório
 
@@ -40,31 +19,24 @@ cd task-manager
 ### 2. Subir os containers
 
 ```bash
-docker compose up --build
+docker compose build
 ```
 
-Aguarde até aparecer nos logs:
+---
 
-```
-taskmanager_backend   | [Nest] LOG Application is running on: http://[::1]:3001
-taskmanager_frontend  | ▲ Next.js ready on http://localhost:3000
-```
-
-### 3. Acessar a aplicação
+### Acessar a aplicação
 
 | Serviço | URL |
 |---|---|
 | Frontend | http://localhost:3000 |
 
-### Parar os containers
+### Parar os serviços
 
 ```bash
 docker compose down
 ```
 
 ### Resetar o banco de dados
-
-#### CUIDADO! Este comando limpa tudo
 
 ```bash
 docker compose down -v
@@ -79,4 +51,47 @@ cd task-manager-backend
 npm install
 npm run test
 ```
+
 ---
+
+## 📡 Exemplos de Requisições
+
+### Criar tarefa
+
+```bash
+curl -X POST http://localhost:3001/tasks \
+  -H "Content-Type: application/json" \
+  -d '{"title":"Estudar NestJS","description":"Revisar DTOs","status":"pending"}'
+```
+
+### Listar todas as tarefas
+
+```bash
+curl http://localhost:3001/tasks
+```
+
+### Listar com filtro e paginação
+
+```bash
+curl "http://localhost:3001/tasks?status=pending&page=1&limit=10"
+```
+
+### Buscar tarefa por ID
+
+```bash
+curl http://localhost:3001/tasks/<id>
+```
+
+### Atualizar tarefa
+
+```bash
+curl -X PUT http://localhost:3001/tasks/<id> \
+  -H "Content-Type: application/json" \
+  -d '{"status":"done"}'
+```
+
+### Deletar tarefa
+
+```bash
+curl -X DELETE http://localhost:3001/tasks/<id>
+```
