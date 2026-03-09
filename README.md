@@ -2,6 +2,17 @@
 
 Aplicação fullstack de gerenciamento de tarefas com criação, listagem, filtragem, paginação, atualização e exclusão.
 
+## 🛠️ Tecnologias
+
+| Camada | Tecnologia |
+|---|---|
+| Backend | NestJS + TypeORM |
+| Frontend | Next.js 15 + Tailwind CSS |
+| Banco de Dados | PostgreSQL 16 |
+| Containerização | Docker + Docker Compose |
+
+---
+
 ## 📦 Como Instalar
 
 ### Pré-requisitos
@@ -13,10 +24,10 @@ Aplicação fullstack de gerenciamento de tarefas com criação, listagem, filtr
 
 ```bash
 git clone https://github.com/AtomicZer0/Task-Manager-API.git
-cd task-manager
+cd Task-Manager-API
 ```
 
-### 2. Subir os containers
+### 2. Buildar os containers
 
 ```bash
 docker compose build
@@ -24,11 +35,26 @@ docker compose build
 
 ---
 
+## 🚀 Como Rodar
+
+### Subir todos os serviços
+
+```bash
+docker compose up
+```
+
+Para rodar em segundo plano:
+
+```bash
+docker compose up -d
+```
+
 ### Acessar a aplicação
 
 | Serviço | URL |
 |---|---|
 | Frontend | http://localhost:3000 |
+| API REST | http://localhost:3001 |
 
 ### Parar os serviços
 
@@ -37,6 +63,8 @@ docker compose down
 ```
 
 ### Resetar o banco de dados
+
+> ⚠️ **Atenção:** este comando apaga todos os dados salvos no banco de dados.
 
 ```bash
 docker compose down -v
@@ -52,9 +80,17 @@ npm install
 npm run test
 ```
 
+Para relatório de cobertura de código:
+
+```bash
+npm run test:cov
+```
+
 ---
 
 ## 📡 Exemplos de Requisições
+
+Base URL: `http://localhost:3001`
 
 ### Criar tarefa
 
