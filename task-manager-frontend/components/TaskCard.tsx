@@ -1,6 +1,6 @@
 'use client';
 
-import { Task, TaskStatus, taskService } from '@/services/api';
+import { Task, TaskStatus } from '@/services/api';
 
 const statusLabel: Record<TaskStatus, string> = {
   pending: 'Pendente',
@@ -21,25 +21,22 @@ interface Props {
 }
 
 export function TaskCard({ task, onDelete, onUpdate }: Props) {
-  const handleDelete = async () => {
-    await taskService.delete(task.id);
-    onDelete(task.id);
-  };
-
   return (
-    <div className="bg-white rounded-xl shadow p-4 flex flex-col gap-2">
-      <div className="flex justify-between items-start gap-2">
-        <h2 className="font-semibold text-gray-800">{task.title}</h2>
-        <span className={`text-xs font-medium px-2 py-1 rounded-full whitespace-nowrap ${statusColor[task.status]}`}>
+    <div className="bg-slate-50 rounded-xl shadow p-4 flex flex-col gap-2 w-full overflow-hidden">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2">
+        <h2 className="font-semibold text-gray-800 text-sm sm:text-base break-all flex-1">
+          {task.title}
+        </h2>
+        <span className={`text-xs font-medium px-2 py-1 rounded-full whitespace-nowrap self-start ${statusColor[task.status]}`}>
           {statusLabel[task.status]}
         </span>
       </div>
 
       {task.description && (
-        <p className="text-sm text-gray-500">{task.description}</p>
+        <p className="text-sm text-gray-500 break-all">{task.description}</p>
       )}
 
-      <div className="flex gap-2 mt-1">
+      <div className="flex flex-col sm:flex-row gap-2 mt-1">
         <button
           onClick={() => onUpdate(task)}
           className="flex-1 text-sm bg-blue-500 hover:bg-blue-600 text-white rounded-lg py-1.5 transition"
@@ -47,7 +44,7 @@ export function TaskCard({ task, onDelete, onUpdate }: Props) {
           Editar
         </button>
         <button
-          onClick={handleDelete}
+          onClick={() => onDelete(task.id)}
           className="flex-1 text-sm bg-red-500 hover:bg-red-600 text-white rounded-lg py-1.5 transition"
         >
           Excluir

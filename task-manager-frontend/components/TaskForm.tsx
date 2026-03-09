@@ -9,6 +9,27 @@ interface Props {
   onCancelEdit: () => void;
 }
 
+const statusOptions: { value: TaskStatus; label: string; color: string }[] = [
+  {
+    value: 'pending',
+    label: 'Pendente',
+    color: 'bg-yellow-100 text-yellow-800 border-yellow-300 hover:bg-yellow-200',
+  },
+  {
+    value: 'in_progress',
+    label: 'Em Progresso',
+    color: 'bg-blue-100 text-blue-800 border-blue-300 hover:bg-blue-200',
+  },
+  {
+    value: 'done',
+    label: 'Concluída',
+    color: 'bg-green-100 text-green-800 border-green-300 hover:bg-green-200',
+  },
+];
+
+const MAX_TITLE = 100;
+const MAX_DESC = 200;
+
 export function TaskForm({ onSuccess, editingTask, onCancelEdit }: Props) {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -22,11 +43,16 @@ export function TaskForm({ onSuccess, editingTask, onCancelEdit }: Props) {
       setDescription(editingTask.description || '');
       setStatus(editingTask.status);
     } else {
-      setTitle('');
-      setDescription('');
-      setStatus('pending');
+      resetFields();
     }
   }, [editingTask]);
+
+  const resetFields = () => {
+    setTitle('');
+    setDescription('');
+    setStatus('pending');
+    setError('');
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -39,52 +65,79 @@ export function TaskForm({ onSuccess, editingTask, onCancelEdit }: Props) {
         await taskService.update(editingTask.id, data);
       } else {
         await taskService.create(data);
+        resetFields();
       }
       onSuccess();
     } catch {
-      setError('Erro ao salvar a tarefa. Verifique o backend.');
+      setError('Erro ao salvar a tarefa. Verifique se o backend está rodando.');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow p-5 flex flex-col gap-3">
-      <h2 className="font-semibold text-black text-lg">
-        {editingTask ? '✏️ Editar Tarefa' : '➕ Nova Tarefa'}
+    <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow p-4 sm:p-5 flex flex-col gap-3 w-full">
+      <h2 className="font-semibold text-gray-700 text-base sm:text-lg">
+        {editingTask ? 'Editar Tarefa' : 'Nova Tarefa'}
       </h2>
 
       {error && (
         <p className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{error}</p>
       )}
 
-      <input
-        required
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
-        placeholder="Título *"
-        className="border rounded-lg px-3 py-2 text-sm text-black outline-none focus:ring-2 focus:ring-blue-400"
-      />
+      {/* Título */}
+      <div className="flex flex-col gap-1">
+        <input
+          required
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          maxLength={MAX_TITLE}
+          placeholder="Título *"
+          className="border rounded-lg px-3 py-2 text-sm text-gray-900 outline-none focus:ring-2 focus:ring-blue-400 placeholder:text-gray-400 w-full"
+        />
+        <span className={`text-xs text-right ${title.length >= MAX_TITLE ? 'text-red-500 font-medium' : 'text-gray-400'}`}>
+          {title.length}/{MAX_TITLE}
+        </span>
+      </div>
 
-      <textarea
-        value={description}
-        onChange={(e) => setDescription(e.target.value)}
-        placeholder="Descrição (opcional)"
-        className="border rounded-lg px-3 py-2 text-sm text-black outline-none focus:ring-2 focus:ring-blue-400 resize-none"
-        rows={3}
-      />
+      {/* Descrição */}
+      <div className="flex flex-col gap-1">
+        <textarea
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          maxLength={MAX_DESC}
+          placeholder="Descrição (opcional)"
+          className="border rounded-lg px-3 py-2 text-sm text-gray-900 outline-none focus:ring-2 focus:ring-blue-400 resize-none placeholder:text-gray-400 placeholder:text-sm w-full"
+          rows={3}
+        />
+        <span className={`text-xs text-right ${description.length >= MAX_DESC ? 'text-red-500 font-medium' : 'text-gray-400'}`}>
+          {description.length}/{MAX_DESC}
+        </span>
+      </div>
 
-      <select
-        value={status}
-        onChange={(e) => setStatus(e.target.value as TaskStatus)}
-        className="border rounded-lg px-3 py-2 text-sm text-black outline-none focus:ring-2 focus:ring-blue-400"
-      >
-        <option value="pending">Pendente</option>
-        <option value="in_progress">Em Progresso</option>
-        <option value="done">Concluída</option>
-      </select>
+      {editingTask && (
+        <div className="flex flex-col gap-1">
+          <span className="text-xs text-gray-500 font-medium">Status</span>
+          <div className="flex gap-2">
+            {statusOptions.map((option) => (
+              <button
+                key={option.value}
+                type="button"
+                onClick={() => setStatus(option.value)}
+                className={`flex-1 text-xs font-medium px-2 sm:px-3 py-2 rounded-lg border transition ${option.color} ${
+                  status === option.value
+                    ? 'ring-2 ring-offset-1 ring-gray-400 font-bold'
+                    : 'opacity-60'
+                }`}
+              >
+                {option.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
 
-      <div className="flex gap-2">
+      <div className="flex flex-col sm:flex-row gap-2">
         <button
           type="submit"
           disabled={loading}
