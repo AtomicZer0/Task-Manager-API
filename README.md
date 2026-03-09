@@ -43,12 +43,6 @@ docker compose build
 docker compose up
 ```
 
-Para rodar em segundo plano:
-
-```bash
-docker compose up -d
-```
-
 ### Acessar a aplicação
 
 | Serviço | URL |
