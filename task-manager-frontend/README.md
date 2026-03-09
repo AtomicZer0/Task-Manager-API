@@ -9,30 +9,6 @@ Interface web desenvolvida com Next.js 15 para gerenciamento de tarefas, consumi
 - [Tailwind CSS](https://tailwindcss.com/) — estilização utilitária
 - [Axios](https://axios-http.com/) — requisições HTTP
 
-## 📁 Estrutura
-
-```
-src/
-├── app/
-│   ├── globals.css
-│   ├── layout.tsx
-│   └── page.tsx
-├── components/
-│   ├── TaskCard.tsx
-│   └── TaskForm.tsx
-└── services/
-    └── api.ts
-```
-
-### Responsabilidade de cada arquivo
-
-| Arquivo | Responsabilidade |
-|---|---|
-| `page.tsx` | Página principal — lista tarefas e gerencia estado |
-| `TaskCard.tsx` | Exibe uma tarefa com botões de editar e excluir |
-| `TaskForm.tsx` | Formulário de criação e edição de tarefas |
-| `api.ts` | Centraliza todas as chamadas HTTP ao backend |
-
 ## 🚀 Como Rodar Localmente
 
 ### Pré-requisitos

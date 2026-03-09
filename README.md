@@ -64,6 +64,8 @@ docker compose down
 
 ### Resetar o banco de dados
 
+#### CUIDADO! Este comando limpa tudo
+
 ```bash
 docker compose down -v
 ```

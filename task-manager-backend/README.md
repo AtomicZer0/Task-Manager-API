@@ -10,23 +10,6 @@ API REST desenvolvida com NestJS e PostgreSQL para gerenciamento de tarefas.
 - [class-validator](https://github.com/typestack/class-validator) — validação de dados
 - [Jest](https://jestjs.io/) — testes unitários
 
-## 📁 Estrutura
-
-```
-src/
-├── tasks/
-│   ├── dto/
-│   │   ├── create-task.dto.ts
-│   │   └── update-task.dto.ts
-│   ├── task.entity.ts
-│   ├── tasks.controller.ts
-│   ├── tasks.controller.spec.ts
-│   ├── tasks.service.ts
-│   ├── tasks.service.spec.ts
-│   └── tasks.module.ts
-├── app.module.ts
-└── main.ts
-```
 
 ## 🚀 Como Rodar Localmente
 
@@ -101,24 +84,3 @@ Os testes cobrem os seguintes cenários:
 | `remove()` | Remoção com sucesso, ID inexistente |
 
 ---
-
-## 📡 Endpoints
-
-| Método | Rota | Body | Resposta |
-|---|---|---|---|
-| `POST` | `/tasks` | `{ title, description?, status }` | `201` Task criada |
-| `GET` | `/tasks` | — | `200` Lista paginada |
-| `GET` | `/tasks?status=pending` | — | `200` Lista filtrada |
-| `GET` | `/tasks/:id` | — | `200` Task / `404` |
-| `PUT` | `/tasks/:id` | `{ title?, description?, status? }` | `200` Task atualizada |
-| `DELETE` | `/tasks/:id` | — | `204` No Content |
-
----
-
-## 🐳 Rodar com Docker
-
-Na raiz do monorepo:
-
-```bash
-docker compose up --build
-```
