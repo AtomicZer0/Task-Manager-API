@@ -104,5 +104,3 @@ const api = axios.create({
   baseURL: 'http://localhost:3001',
 });
 ```
-
-Se o backend estiver em outra URL, altere o `baseURL`.
