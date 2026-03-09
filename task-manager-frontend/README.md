@@ -1,36 +1,92 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🖥️ Task Manager — Frontend
 
-## Getting Started
+Interface web desenvolvida com Next.js 15 para gerenciamento de tarefas, consumindo a API REST do backend.
 
-First, run the development server:
+## 🛠️ Tecnologias
+
+- [Next.js 15](https://nextjs.org/) — framework React com App Router
+- [TypeScript](https://www.typescriptlang.org/) — tipagem estática
+- [Tailwind CSS](https://tailwindcss.com/) — estilização utilitária
+- [Axios](https://axios-http.com/) — requisições HTTP
+
+## 📁 Estrutura
+
+```
+src/
+├── app/
+│   ├── globals.css
+│   ├── layout.tsx
+│   └── page.tsx
+├── components/
+│   ├── TaskCard.tsx
+│   └── TaskForm.tsx
+└── services/
+    └── api.ts
+```
+
+### Responsabilidade de cada arquivo
+
+| Arquivo | Responsabilidade |
+|---|---|
+| `page.tsx` | Página principal — lista tarefas e gerencia estado |
+| `TaskCard.tsx` | Exibe uma tarefa com botões de editar e excluir |
+| `TaskForm.tsx` | Formulário de criação e edição de tarefas |
+| `api.ts` | Centraliza todas as chamadas HTTP ao backend |
+
+## 🚀 Como Rodar Localmente
+
+### Pré-requisitos
+
+- Node.js 20+
+- Backend rodando em `http://localhost:3001`
+
+### 1. Instalar dependências
+
+```bash
+npm install
+```
+
+### 2. Rodar em modo desenvolvimento
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+A aplicação estará disponível em [**http://localhost:3000**](http://localhost:3000)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## ⚙️ Configuração da API
 
-## Learn More
+A URL base do backend está definida em `src/services/api.ts`:
 
-To learn more about Next.js, take a look at the following resources:
+```typescript
+const api = axios.create({
+  baseURL: 'http://localhost:3001',
+});
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Se o backend estiver em outra URL, altere o `baseURL`.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+## 🔧 Funcionalidades
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- ✅ Criar tarefas com título, descrição e status
+- ✅ Listar todas as tarefas
+- ✅ Filtrar tarefas por status (Pendente, Em Progresso, Concluída)
+- ✅ Editar tarefas existentes
+- ✅ Excluir tarefas
+- ✅ Feedback de loading e erros nas requisições
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+
+## 🐳 Rodar com Docker
+
+Na raiz do monorepo:
+
+```bash
+docker compose up --build
+```
+
+A aplicação estará disponível em [**http://localhost:3000**](http://localhost:3000)
