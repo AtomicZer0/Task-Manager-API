@@ -74,12 +74,6 @@ npm install
 npm run test
 ```
 
-Para relatório de cobertura de código:
-
-```bash
-npm run test:cov
-```
-
 ---
 
 ## 📡 Exemplos de Requisições
