@@ -74,7 +74,7 @@ docker compose down -v
 
 ```bash
 cd task-manager-backend
-npm install - opcional
+npm install
 npm run test
 ```
 
