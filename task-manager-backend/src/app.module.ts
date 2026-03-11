@@ -4,6 +4,9 @@ import { AppService } from './app.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TasksModule } from './tasks/tasks.module';
+import { AuthModule } from './auth/auth.module';
+import { Task } from './tasks/task.entity';
+import { User } from './users/user.entity';
 
 // @Module: Decorador que define a estrutura modular da aplicação
 // Um módulo agrupa componentes relacionados (controllers, services, modules)
@@ -42,6 +45,7 @@ import { TasksModule } from './tasks/tasks.module';
         autoLoadEntities: true,
         // synchronize: true - Sincroniza automaticamente o schema do banco com as entidades
         // AVISO: Apenas usar em desenvolvimento, nunca em produção pois pode deletar dados
+        entities: [Task, User],
         synchronize: true, // apenas utilizar em desenvolvimento
       }),
     }),
@@ -49,6 +53,7 @@ import { TasksModule } from './tasks/tasks.module';
     // TasksModule: Módulo que contém toda a lógica de gerenciamento de tarefas
     // Inclui TasksController, TasksService, e a entidade Task
     TasksModule,
+    AuthModule,
   ],
 
   // controllers: Array de controllers registrados neste módulo

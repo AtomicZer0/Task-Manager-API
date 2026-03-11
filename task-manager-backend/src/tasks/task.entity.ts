@@ -3,13 +3,17 @@
 // Column: define uma coluna do banco de dados
 // CreateDateColumn: cria automaticamente uma coluna com data de criação
 // UpdateDateColumn: cria automaticamente uma coluna com data de atualização
+
 import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
   CreateDateColumn,
   UpdateDateColumn,
+  ManyToOne,
+  JoinColumn,
 } from 'typeorm';
+import { User } from 'src/users/user.entity';
 
 // Enum (enumeração) que define os possíveis status de uma tarefa
 export enum TaskStatus {
@@ -47,6 +51,19 @@ export class Task {
   })
   // Propriedade: Status da tarefa (pending, in_progress, done)
   status: TaskStatus;
+
+  /**
+   * Relacionamento Many-to-One — muitas tasks pertencem a um usuário.
+   * onDelete: 'CASCADE' garante que ao deletar o usuário,
+   * todas as suas tasks são deletadas automaticamente.
+   */
+  @ManyToOne(() => User, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'userId' })
+  user: User;
+
+  /** Coluna que armazena apenas o ID do usuário dono da task */
+  @Column()
+  userId: string;
 
   // Decorador @CreateDateColumn: cria automaticamente uma coluna de data e hora
   // Preenchida automaticamente com a data/hora atual quando a tarefa é criada

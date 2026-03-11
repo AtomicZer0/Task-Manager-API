@@ -14,7 +14,10 @@ import {
   Param,
   HttpCode,
   Query,
+  UseGuards,
+  Request,
 } from '@nestjs/common';
+import { Request as ExpressRequest } from 'express';
 // Importa o serviço que contém a lógica de negócio
 import { TasksService } from './tasks.service';
 // Importa o DTO para validar dados ao criar tarefas
@@ -23,10 +26,18 @@ import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
 // Importa o enum com os possíveis status de uma tarefa
 import { TaskStatus } from './task.entity';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
 // Decorador @Controller: define que esta classe é um controlador
 // 'tasks' é o prefixo de rota que será usado para todas as rotas desta classe
 // Todas as rotas começarão com /tasks
+
+/**
+ * @UseGuards(JwtAuthGuard) aplicado na classe inteira protege
+ * TODOS os endpoints deste controller — qualquer requisição sem
+ * token JWT válido recebe 401 Unauthorized automaticamente.
+ */
+@UseGuards(JwtAuthGuard)
 @Controller('tasks')
 export class TasksController {
   // Construtor que injeta o serviço de tarefas via dependência
@@ -37,9 +48,12 @@ export class TasksController {
   // Rota: POST /tasks
   // Cria uma nova tarefa com dados validados pelo CreateTaskDto
   @Post()
-  create(@Body() dto: CreateTaskDto) {
+  create(
+    @Body() dto: CreateTaskDto,
+    @Request() req: ExpressRequest & { user: { id: string } },
+  ) {
     // @Body() extrai o corpo da requisição e valida com o DTO
-    return this.tasksService.create(dto);
+    return this.tasksService.create(dto, req.user.id);
   }
 
   // Decorador @Get: define que este método trata requisições GET
@@ -51,20 +65,24 @@ export class TasksController {
   //   - limit: quantidade de itens por página (padrão: 10)
   @Get()
   findAll(
+    @Request() req: ExpressRequest & { user: { id: string } },
     @Query('status') status?: TaskStatus,
     @Query('page') page?: number,
     @Query('limit') limit?: number,
   ) {
-    return this.tasksService.findAll(status, page, limit);
+    return this.tasksService.findAll(req.user.id, status, page, limit);
   }
 
   // Decorador @Get(':id'): define que este método trata requisições GET com parâmetro dinâmico
   // Rota: GET /tasks/:id
   // Busca uma tarefa específica pelo seu ID único (UUID)
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  findOne(
+    @Param('id') id: string,
+    @Request() req: ExpressRequest & { user: { id: string } },
+  ) {
     // @Param('id') extrai o ID da rota (ex: /tasks/uuid-123)
-    return this.tasksService.findOne(id);
+    return this.tasksService.findOne(id, req.user.id);
   }
 
   // Decorador @Put(':id'): define que este método trata requisições PUT
@@ -72,10 +90,14 @@ export class TasksController {
   // Atualiza uma tarefa existente com dados validados pelo UpdateTaskDto
   // Diferente do POST, este método espera uma tarefa existente
   @Put(':id')
-  update(@Param('id') id: string, @Body() dto: UpdateTaskDto) {
+  update(
+    @Param('id') id: string,
+    @Body() dto: UpdateTaskDto,
+    @Request() req: ExpressRequest & { user: { id: string } },
+  ) {
     // @Param('id') extrai o ID da rota
     // @Body() extrai e valida os dados de atualização do DTO
-    return this.tasksService.update(id, dto);
+    return this.tasksService.update(id, dto, req.user.id);
   }
 
   // Decorador @Delete(':id'): define que este método trata requisições DELETE
@@ -85,8 +107,11 @@ export class TasksController {
   // Decorador @HttpCode(204): define o código HTTP da resposta como 204 No Content
   // 204 indica sucesso sem retornar conteúdo no corpo da resposta
   @HttpCode(204)
-  remove(@Param('id') id: string) {
+  remove(
+    @Param('id') id: string,
+    @Request() req: ExpressRequest & { user: { id: string } },
+  ) {
     // @Param('id') extrai o ID da rota
-    return this.tasksService.remove(id);
+    return this.tasksService.remove(id, req.user.id);
   }
 }
