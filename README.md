@@ -1,6 +1,6 @@
-# 📝 Task Manager
+# ✅ Task Manager
 
-Aplicação fullstack de gerenciamento de tarefas com criação, listagem, filtragem, paginação, atualização e exclusão.
+Aplicação de gerenciamento de tarefas com autenticação de usuários, criação, listagem, filtragem, paginação, atualização e exclusão.
 
 ## 🛠️ Tecnologias
 
@@ -9,9 +9,8 @@ Aplicação fullstack de gerenciamento de tarefas com criação, listagem, filtr
 | Backend | NestJS + TypeORM |
 | Frontend | Next.js 15 + Tailwind CSS |
 | Banco de Dados | PostgreSQL 16 |
+| Autenticação | JWT + Bcrypt |
 | Containerização | Docker + Docker Compose |
-
----
 
 ## 📦 Como Instalar
 
@@ -74,36 +73,53 @@ npm install
 npm run test
 ```
 
----
-
 ## 📡 Exemplos de Requisições
 
-Base URL: `http://localhost:3001`
 
-### Criar tarefa
+### Registrar usuário
+
+```bash
+curl -X POST http://localhost:3001/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{"email":"joao@email.com","password":"123456"}'
+```
+
+### Fazer login
+
+```bash
+curl -X POST http://localhost:3001/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"joao@email.com","password":"123456"}'
+```
+
+Resposta:
+```json
+{
+  "access_token": "eyJhbGciOiJIUzI1NiJ9..."
+}
+```
+
+### Criar tarefa (autenticado)
 
 ```bash
 curl -X POST http://localhost:3001/tasks \
   -H "Content-Type: application/json" \
+  -H "Authorization: Bearer <access_token>" \
   -d '{"title":"Estudar NestJS","description":"Revisar DTOs","status":"pending"}'
 ```
 
-### Listar todas as tarefas
+### Listar tarefas (autenticado)
 
 ```bash
-curl http://localhost:3001/tasks
+curl http://localhost:3001/tasks \
+  -H "Authorization: Bearer <access_token>"
 ```
 
 ### Listar com filtro e paginação
 
 ```bash
-curl "http://localhost:3001/tasks?status=pending&page=1&limit=10"
-```
-
-### Buscar tarefa por ID
-
-```bash
-curl http://localhost:3001/tasks/<id>
+curl "http://localhost:3001/tasks?status=pending&page=1&limit=10" \
+  -H "Authorization: Bearer <access_token>"
 ```
 
 ### Atualizar tarefa
@@ -111,11 +127,13 @@ curl http://localhost:3001/tasks/<id>
 ```bash
 curl -X PUT http://localhost:3001/tasks/<id> \
   -H "Content-Type: application/json" \
+  -H "Authorization: Bearer <access_token>" \
   -d '{"status":"done"}'
 ```
 
 ### Deletar tarefa
 
 ```bash
-curl -X DELETE http://localhost:3001/tasks/<id>
+curl -X DELETE http://localhost:3001/tasks/<id> \
+  -H "Authorization: Bearer <access_token>"
 ```
