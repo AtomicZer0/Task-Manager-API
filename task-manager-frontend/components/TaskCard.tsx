@@ -2,36 +2,26 @@
 
 import { Task, TaskStatus } from "@/services/api";
 
-// Objeto que mapeia cada status para seu rótulo em português
-// Key: Status da tarefa (pending, in_progress, done)
-// Value: Texto a exibir para o usuário
 const statusLabel: Record<TaskStatus, string> = {
-  pending: "Pendente", // Tarefa ainda não iniciada
-  in_progress: "Em Progresso", // Tarefa em andamento
-  done: "Concluída", // Tarefa finalizada
+  pending: "Pendente",
+  in_progress: "Em Progresso",
+  done: "Concluída",
 };
 
-// Objeto que mapeia cada status para suas cores (classes Tailwind CSS)
-// Usa cores para diferenciar visualmente o status da tarefa
 const statusColor: Record<TaskStatus, string> = {
-  pending: "bg-yellow-100 text-yellow-800", // Amarelo para pendente
-  in_progress: "bg-blue-100 text-blue-800", // Azul para em progresso
-  done: "bg-green-100 text-green-800", // Verde para concluída
+  pending: "bg-yellow-100 text-yellow-800",
+  in_progress: "bg-blue-100 text-blue-800",
+  done: "bg-green-100 text-green-800",
 };
 
-// Interface que define as props do componente TaskCard
 interface Props {
-  task: Task; // Dados da tarefa a renderizar
-  onDelete: (id: string) => void; // Callback para deletar tarefa (recebe ID)
-  onUpdate: (task: Task) => void; // Callback para editar tarefa (recebe tarefa inteira)
+  task: Task;
+  onDelete: (id: string) => void;
+  onUpdate: (task: Task) => void;
 }
 
-// Componente TaskCard: Renderiza um card representando uma tarefa
-// Exibe: título, descrição, status e botões de ação (editar/excluir)
-// Props: task (dados), onDelete e onUpdate (callbacks de ação)
 export function TaskCard({ task, onDelete, onUpdate }: Props) {
   return (
-    // Container principal: card com fundo claro, bordas arredondadas e sombra
     <div className="bg-slate-50 rounded-xl shadow p-4 flex flex-col gap-2 w-full overflow-hidden">
       {/* Cabeçalho do card: Título e Status */}
       {/* flex-col em mobile, flex-row em desktop para layout responsivo */}

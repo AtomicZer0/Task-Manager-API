@@ -12,7 +12,7 @@ import { User } from '../users/user.entity';
   imports: [
     TypeOrmModule.forFeature([User]),
     PassportModule,
-    // JwtModule configurado de forma assíncrona para ler o JWT_SECRET do .env
+
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],

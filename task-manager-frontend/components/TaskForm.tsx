@@ -3,15 +3,12 @@
 import { useState, useEffect } from "react";
 import { Task, TaskStatus, CreateTaskDto, taskService } from "@/services/api";
 
-// Interface que define as props do componente TaskForm
 interface Props {
-  onSuccess: () => void; // Callback executado após sucesso na criação/edição
-  editingTask?: Task | null; // Tarefa sendo editada (undefined ou null = criar nova)
-  onCancelEdit: () => void; // Callback para cancelar edição
+  onSuccess: () => void;
+  editingTask?: Task | null;
+  onCancelEdit: () => void;
 }
 
-// Array com opções de status para o selector
-// Inclui valor, rótulo e classes de cor Tailwind para cada status
 const statusOptions: { value: TaskStatus; label: string; color: string }[] = [
   {
     value: "pending",
@@ -31,46 +28,30 @@ const statusOptions: { value: TaskStatus; label: string; color: string }[] = [
   },
 ];
 
-// Constante: Limite máximo de caracteres para o título
 const MAX_TITLE = 100;
-// Constante: Limite máximo de caracteres para a descrição
 const MAX_DESC = 200;
 
-// Componente TaskForm: Formulário para criar ou editar tarefas
-// Propsistório: onSuccess (callback), editingTask (tarefa em edição), onCancelEdit (callback)
 export function TaskForm({ onSuccess, editingTask, onCancelEdit }: Props) {
-  // Estado: Título da tarefa
   const [title, setTitle] = useState("");
 
-  // Estado: Descrição da tarefa
   const [description, setDescription] = useState("");
 
-  // Estado: Status da tarefa (pending, in_progress, done)
   const [status, setStatus] = useState<TaskStatus>("pending");
 
-  // Estado: Indicador de envio do formulário (true enquanto requisição da API)
   const [loading, setLoading] = useState(false);
 
-  // Estado: Mensagem de erro (vazio se sem erro)
   const [error, setError] = useState("");
 
-  // useEffect: Popula campos quando uma tarefa está sendo editada
-  // Ou reseta campos quando criando nova tarefa
-  // Dependency: [editingTask] - executa quando editingTask muda
   useEffect(() => {
     if (editingTask) {
-      // Se editando: carrega dados da tarefa nos campos
       setTitle(editingTask.title);
       setDescription(editingTask.description || "");
       setStatus(editingTask.status);
     } else {
-      // Se criando: reseta para valores vazios
       resetFields();
     }
   }, [editingTask]);
 
-  // Função: Limpa todos os campos e mensagens de erro
-  // Usada quando: formulário enviado com sucesso ou cancelado
   const resetFields = () => {
     setTitle("");
     setDescription("");
@@ -78,46 +59,31 @@ export function TaskForm({ onSuccess, editingTask, onCancelEdit }: Props) {
     setError("");
   };
 
-  // Função: Gerencia envio do formulário
-  // Validação, requisição para backend (criar ou editar), tratamento de erros
   const handleSubmit = async (e: React.FormEvent) => {
-    // Previne comportamento padrão do formulário (recarregar página)
     e.preventDefault();
 
-    // Ativa indicador de carregamento (desabilita botão enviar)
     setLoading(true);
-    // Limpa mensagem de erro anterior
     setError("");
 
     try {
-      // Prepara dados validated para enviar ao backend
       const data: CreateTaskDto = { title, description, status };
 
-      // Verifica se está editando ou criando
       if (editingTask) {
-        // Se editando: faz requisição PUT/PATCH com ID e dados
         await taskService.update(editingTask.id, data);
       } else {
-        // Se criando: faz requisição POST com dados
         await taskService.create(data);
-        // Após criar com sucesso: limpa campos do formulário
         resetFields();
       }
 
-      // Após sucesso: executa callback para atualizar lista principal
       onSuccess();
     } catch {
-      // Em caso de erro: mostra mensagem de erro ao usuário
       setError("Erro ao salvar a tarefa. Verifique se o backend está rodando.");
     } finally {
-      // Desativa indicador de carregamento (em qualquer caso: sucesso ou erro)
       setLoading(false);
     }
   };
 
-  // JSX: Renderização do formulário
   return (
-    // form: Container do formulário com estilos de card (branco, sombra, arredondado)
     <form
       onSubmit={handleSubmit}
       className="bg-white rounded-xl shadow p-4 sm:p-5 flex flex-col gap-3 w-full"

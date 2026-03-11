@@ -19,13 +19,13 @@ export default function RegisterPage() {
 
     try {
       await authService.register(email, password);
-      // Após registrar, faz login automaticamente
       await authService.login(email, password);
       router.push("/");
     } catch (err: unknown) {
-      const msg = err instanceof Error && "response" in err 
-        ? (err.response as { data?: { message?: string } }).data?.message 
-        : undefined;
+      const msg =
+        err instanceof Error && "response" in err
+          ? (err.response as { data?: { message?: string } }).data?.message
+          : undefined;
       setError(
         msg === "Email já cadastrado"
           ? msg

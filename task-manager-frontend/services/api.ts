@@ -27,11 +27,6 @@ const api = axios.create({
   baseURL: "http://localhost:3001",
 });
 
-/**
- * Interceptor de requisição — executado antes de TODA chamada à API.
- * Lê o token salvo no localStorage e injeta no header Authorization.
- * Isso evita ter que passar o token manualmente em cada chamada.
- */
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem("access_token");
   if (token) {
@@ -40,11 +35,6 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-/**
- * Interceptor de resposta — executado após TODA resposta da API.
- * Se receber 401 (não autorizado), limpa o token salvo e
- * redireciona para a página de login.
- */
 api.interceptors.response.use(
   (response) => response,
   (error) => {
@@ -70,7 +60,6 @@ export const taskService = {
 };
 
 export const authService = {
-  /** Envia email e senha, recebe e salva o token no localStorage */
   login: async (email: string, password: string) => {
     const response = await api.post<{ access_token: string }>("/auth/login", {
       email,
@@ -80,16 +69,13 @@ export const authService = {
     return response.data;
   },
 
-  /** Cria uma nova conta */
   register: (email: string, password: string) =>
     api.post("/auth/register", { email, password }),
 
-  /** Remove o token e redireciona para login */
   logout: () => {
     localStorage.removeItem("access_token");
     window.location.href = "/login";
   },
 
-  /** Verifica se há token salvo */
   isAuthenticated: () => !!localStorage.getItem("access_token"),
 };

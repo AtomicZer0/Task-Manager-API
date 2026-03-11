@@ -19,7 +19,6 @@ export default function LoginPage() {
 
     try {
       await authService.login(email, password);
-      // Login bem-sucedido — redireciona para a página principal
       router.push("/");
     } catch {
       setError("Email ou senha inválidos.");

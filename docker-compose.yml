@@ -1,126 +1,69 @@
-# Docker Compose: Arquivo de orquestração de containers
-# Define toda a arquitetura da aplicação com 3 serviços: Database, Backend e Frontend
-# Uso: docker-compose up (para iniciar todos os serviços simultaneamente)
-
-# services: Seção que define todos os containers e suas configurações
 services:
-  # ========================================================================================
-  # SERVIÇO 1: DATABASE (PostgreSQL)
-  # ========================================================================================
   db:
-    # image: Usa imagem PostgreSQL 16 em Alpine Linux (leve e eficiente)
     image: postgres:16-alpine
-    # container_name: Nome específico do container para referência
     container_name: taskmanager_db
 
-    # environment: Variáveis de ambiente para configurar PostgreSQL
     environment:
-      POSTGRES_USER: postgres # Usuário root do PostgreSQL
-      POSTGRES_PASSWORD: postgres # Senha do usuário root
-      POSTGRES_DB: taskdb # Nome do banco de dados padrão
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: taskdb
 
-    # ports: Mapeia porta do container para a máquina host
-    # "5432:5432" = porta_host:porta_container (acessa em localhost:5432)
     ports:
       - "5432:5432"
 
-    # volumes: Monta pastas para persistência de dados e scripts de inicialização
     volumes:
-      # postgres_data: volume nomeado que persiste dados do banco entre restarts
       - postgres_data:/var/lib/postgresql/data
-      # init.sql: script SQL executado automaticamente na primeira inicialização
-      # Cria tabelas, índices e dados iniciais
       - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
 
-    # healthcheck: Verifica saúde do container em intervalos regulares
-    # Impede que backend inicie antes do DB estar pronto
     healthcheck:
-      # test: Comando executado para verificar se está saudável
-      # pg_isready verifica se PostgreSQL está aceitando conexões
       test: ["CMD-SHELL", "pg_isready -U postgres -d taskdb"]
-      interval: 3s # A cada 3 segundos testa a saúde
-      timeout: 5s # Aguarda máximo 5 segundos pela resposta
-      retries: 10 # Tenta 10 vezes antes de marcar como unhealthy
-      start_period: 10s # Grace period antes de começar os testes
+      interval: 3s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
 
-    # networks: Conecta ao bridge network customizado para comunicação entre containers
     networks:
       - tasknetwork
 
-  # ========================================================================================
-  # SERVIÇO 2: BACKEND (NestJS API)
-  # ========================================================================================
   backend:
-    # build: Constrói imagem Docker a partir do Dockerfile no diretório especificado
     build: ./task-manager-backend
-    # container_name: Nome específico do container
     container_name: taskmanager_backend
 
-    # ports: Mapeia porta do container para acesso externo
-    # Acessa a API em http://localhost:3001
     ports:
       - "3001:3001"
 
-    # environment: Variáveis de ambiente para NestJS/TypeORM
-    # Estas credenciais devem corresponder aos valores PostgreSQL
     environment:
-      DB_HOST: db # Nome do serviço (Docker resolve como hostname)
-      DB_PORT: 5432 # Porta padrão do PostgreSQL
-      DB_USERNAME: taskuser # Usuário (NOTA: Requer ajuste, está como postgres em init.sql)
-      DB_PASSWORD: suasenha # Senha (NOTA: Requer sincronização com PostgreSQL)
-      DB_NAME: taskdb # Nome do banco de dados
-      JWT_SECRET: seu_segredo_super_secreto_aqui # Segredo para JWT (deve ser seguro)
-      JWT_EXPIRES_IN: 7d # Tempo de expiração do token JWT
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_USERNAME: taskuser
+      DB_PASSWORD: suasenha
+      DB_NAME: taskdb
+      JWT_SECRET: seu_segredo_super_secreto_aqui
+      JWT_EXPIRES_IN: 7d
 
-    # depends_on: Define ordem de inicialização e dependências
     depends_on:
       db:
-        # condition: Aguarda até que a condição seja atendida
-        # service_healthy: Aguarda o healthcheck passar (DB pronto)
         condition: service_healthy
 
-    # networks: Conecta ao mesmo bridge network para comunicação com DB e Frontend
     networks:
       - tasknetwork
 
-  # ========================================================================================
-  # SERVIÇO 3: FRONTEND (Next.js)
-  # ========================================================================================
   frontend:
-    # build: Constrói imagem Docker a partir do Dockerfile no diretório especificado
     build: ./task-manager-frontend
-    # container_name: Nome específico do container
     container_name: taskmanager_frontend
 
-    # ports: Mapeia porta para acesso externo
-    # Acessa a aplicação em http://localhost:3000
     ports:
       - "3000:3000"
 
-    # depends_on: Aguarda até que o backend esteja pronto
-    # Frontend não tem healthcheck, apenas aguarda backend iniciar
     depends_on:
       - backend
 
-    # networks: Conecta ao mesmo bridge network
     networks:
       - tasknetwork
 
-# ========================================================================================
-# VOLUMES: Define volumes nomeados para persistência de dados
-# ========================================================================================
 volumes:
-  # postgres_data: Volume que persiste dados do PostgreSQL
-  # Sem isso, dados seriam perdidos ao parar o container
-  # Docker gerencia o armazenamento automaticamente no host
   postgres_data:
 
-# ========================================================================================
-# NETWORKS: Define redes customizadas para isolamento e comunicação entre containers
-# ========================================================================================
 networks:
-  # tasknetwork: Rede bridge customizada
   tasknetwork:
-    # driver: bridge conecta containers na mesma máquina com bridge de rede
-    # Permite comunicação usando nomes de serviços (hostname de container)
     driver: bridge
